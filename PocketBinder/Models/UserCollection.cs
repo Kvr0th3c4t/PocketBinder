@@ -7,5 +7,8 @@ namespace PocketBinder.Models
         public string CardId { get; set; } = string.Empty;
         public int Quantity { get; set; }
         public DateTime AddedAt { get; set; }
+
+        //Foreign key relationships
+        public User? User { get; set; }
     }
 }

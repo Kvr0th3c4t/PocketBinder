@@ -1,8 +1,30 @@
+using Microsoft.EntityFrameworkCore;
+using PocketBinder.Data;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddDbContext<ApplicationDbContext>(options =>
+   {
+     var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+
+       if (builder.Environment.IsDevelopment())
+       {
+           // Desarrollo: SQL Server
+           options.UseSqlServer(connectionString);
+       }
+       else
+       {
+           // Producción: MySQL/MariaDB
+           var serverVersion = ServerVersion.AutoDetect(connectionString);
+           options.UseMySql(connectionString, serverVersion);
+       }
+   });
+
+
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
