@@ -7,12 +7,15 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Configuración de JWT Authentication
 builder.Services.AddAuthentication(options =>
 {
+    // Configuramos el esquema de autenticación por defecto para usar JWT Bearer
     options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
     options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
 }).AddJwtBearer(options =>
 {
+    // Configuración de validación del token JWT
     options.TokenValidationParameters = new TokenValidationParameters
 
     {
@@ -27,11 +30,13 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Configuración de autorización para proteger las rutas de la API
 builder.Services.AddAuthorization();
-// Add services to the container.
 
+// Add services to the container.
 builder.Services.AddControllers();
 
+// Configuración de Entity Framework Core para usar SQL Server en desarrollo y MySQL/MariaDB en producción
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
    {
      var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
@@ -53,6 +58,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
+
+// Registramos el servicio de autenticación para que pueda ser inyectado en los controladores
 builder.Services.AddScoped<IAuthService, AuthService>();
 
 var app = builder.Build();
@@ -65,6 +72,7 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+// Habilitamos la autenticación y autorización en el pipeline de la aplicación
 app.UseAuthentication();
 app.UseAuthorization();
 

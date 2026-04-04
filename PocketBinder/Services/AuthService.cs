@@ -10,6 +10,7 @@ namespace PocketBinder.Services;
 
 public class AuthService : IAuthService
 {
+    // Inyectamos el ApplicationDbContext y IConfiguration para acceder a la base de datos y a la configuración de JWT
     private readonly ApplicationDbContext _context;
     private readonly IConfiguration _configuration;
 
@@ -19,6 +20,7 @@ public class AuthService : IAuthService
         _configuration = configuration;
     }
 
+    // Método para manejar el login de usuarios
     public async Task<LoginResponseDto> LoginAsync(LoginDto loginDto)
     {
         var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == loginDto.Email);
@@ -32,6 +34,7 @@ public class AuthService : IAuthService
         return new LoginResponseDto(token, user.Email);
     }
 
+    // Método para manejar el registro de nuevos usuarios
     public async Task<bool> RegisterAsync(RegisterDto registerDto)
     {
         if(await _context.Users.AnyAsync(u => u.Email == registerDto.Email))
@@ -60,6 +63,7 @@ public class AuthService : IAuthService
         return true;
     }
 
+    //  Método privado para generar un token JWT para el usuario autenticado
     private string GenerateJwtToken(User user)
     {
         var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_configuration["Jwt:Key"]));
