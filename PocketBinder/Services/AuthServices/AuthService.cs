@@ -1,12 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PocketBinder.Data;
-using PocketBinder.Dtos;
+using PocketBinder.DTOs.Auth;
 using PocketBinder.Models;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 
-namespace PocketBinder.Services;
+namespace PocketBinder.Services.AuthServices;
 
 public class AuthService : IAuthService
 {

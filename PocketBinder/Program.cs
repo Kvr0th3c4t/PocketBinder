@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PocketBinder.Data;
-using PocketBinder.Services;
+using PocketBinder.Services.AuthServices;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);

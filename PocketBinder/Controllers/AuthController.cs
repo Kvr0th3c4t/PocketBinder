@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using PocketBinder.Dtos;
-using PocketBinder.Services;
+using PocketBinder.DTOs.Auth;
+using PocketBinder.Services.AuthServices;
 
 namespace PocketBinder.Controllers;
 

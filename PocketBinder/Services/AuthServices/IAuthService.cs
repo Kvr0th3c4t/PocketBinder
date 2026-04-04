@@ -1,6 +1,6 @@
-using PocketBinder.Dtos;
+using PocketBinder.DTOs.Auth;
 
-namespace PocketBinder.Services;
+namespace PocketBinder.Services.AuthServices;
 
 public interface IAuthService
 {

@@ -1,4 +1,4 @@
-namespace PocketBinder.Dtos;
+namespace PocketBinder.DTOs.Auth;
 
 public record RegisterDto(
     string Email,

@@ -1,3 +1,3 @@
-namespace PocketBinder.Dtos;
+namespace PocketBinder.DTOs.Auth;
 
 public record LoginDto(string Email, string Password);
