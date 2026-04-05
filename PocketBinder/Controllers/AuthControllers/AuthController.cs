@@ -3,7 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using PocketBinder.DTOs.Auth;
 using PocketBinder.Services.AuthServices;
 
-namespace PocketBinder.Controllers;
+namespace PocketBinder.Controllers.AuthControllers;
 
 [ApiController]
 [Route("api/[controller]")]

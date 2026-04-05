@@ -1,4 +1,6 @@
-﻿namespace PocketBinder.DTOs.Query
+﻿using Refit;
+
+namespace PocketBinder.DTOs.Query
 {
     public class CardQueryDto
     {
@@ -8,7 +10,10 @@
         public string Rarity { get; set; } = string.Empty;
         public string Supertype { get; set; } = string.Empty;
         public string Artist { get; set; } = string.Empty;
+        [AliasAs("page")]
         public int Page { get; set; } = 1;
-        public int PageSize { get; set; } = 20;
+        [AliasAs("pageSize")]
+        public int PageSize { get; set; } = 2;
+        public string OrderBy { get; set; } = string.Empty;
     }
 }

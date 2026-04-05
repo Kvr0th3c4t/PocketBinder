@@ -2,7 +2,9 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PocketBinder.Data;
+using Refit;
 using PocketBinder.Services.AuthServices;
+using PocketBinder.Services.TcgApiServices;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -54,6 +56,14 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
        }
    });
 
+// Configuración de Refit para consumir la API de Pokémon TCG
+builder.Services.AddRefitClient<IPokemonTcgApi>()
+    .ConfigureHttpClient(c =>
+    {
+        c.BaseAddress = new Uri(builder.Configuration["PokemonTcgApi:BaseUrl"]);
+        c.DefaultRequestHeaders.Add("X-Api-Key", builder.Configuration["PokemonTcgApi:ApiKey"]);
+    });
+    
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
@@ -61,6 +71,8 @@ builder.Services.AddSwaggerGen();
 
 // Registramos el servicio de autenticación para que pueda ser inyectado en los controladores
 builder.Services.AddScoped<IAuthService, AuthService>();
+// Registramos el servicio de Pokémon TCG para que pueda ser inyectado en los controladores
+builder.Services.AddScoped<IPokemonTcgService, PokemonTcgService>();
 
 var app = builder.Build();
 
