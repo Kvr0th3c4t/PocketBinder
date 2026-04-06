@@ -1,10 +1,12 @@
+using FluentValidation;
+using FluentValidation.AspNetCore;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PocketBinder.Data;
-using Refit;
 using PocketBinder.Services.AuthServices;
 using PocketBinder.Services.TcgApiServices;
+using Refit;
 using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -37,6 +39,8 @@ builder.Services.AddAuthorization();
 
 // Add services to the container.
 builder.Services.AddControllers();
+// Configuración de FluentValidation para validar los DTOs de entrada en los controladores
+builder.Services.AddFluentValidationAutoValidation();
 
 // Configuración de Entity Framework Core para usar SQL Server en desarrollo y MySQL/MariaDB en producción
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
@@ -73,6 +77,8 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddScoped<IAuthService, AuthService>();
 // Registramos el servicio de Pokémon TCG para que pueda ser inyectado en los controladores
 builder.Services.AddScoped<IPokemonTcgService, PokemonTcgService>();
+// Registramos los validadores de FluentValidation para que puedan ser inyectados en los controladores
+builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 
 var app = builder.Build();
 

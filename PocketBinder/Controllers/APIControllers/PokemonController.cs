@@ -10,13 +10,14 @@ namespace PocketBinder.Controllers.APIControllers;
 
 public class PokemonController : ControllerBase
 {
-
+    // Inyectamos el servicio de Pokémon TCG para manejar las solicitudes relacionadas con cartas y sets
     private readonly IPokemonTcgService _pokemonTcgService;
     public PokemonController(IPokemonTcgService pokemonTcgService)
     {
         _pokemonTcgService = pokemonTcgService;
     }
 
+    // Endpoint para buscar cartas con filtros y paginación
     [HttpGet("cards")]
     public async Task<IActionResult> GetCards([FromQuery] CardQueryDto query)
     {
@@ -24,6 +25,7 @@ public class PokemonController : ControllerBase
         return Ok(result);
     }
 
+    // Endpoint para buscar sets con filtros y paginación
     [HttpGet("sets")]
     public async Task<ActionResult> GetSets([FromQuery] SetQueryDto query)
     {
