@@ -52,7 +52,9 @@ namespace PocketBinder.Services.UserCollectionService
                 .ToListAsync();
             var query = string.Join(" OR ", cardIds.Select(id => $"id:{id}"));
 
-            await _pokemonTcgApi.GetCardsAsync(0,0, query);
+            await _pokemonTcgApi.SearchCardsAsync(0,0, query);
+
+            throw new NotImplementedException();
         }
 
         public async Task RemoveCardFromCollectionAsync(string cardId)

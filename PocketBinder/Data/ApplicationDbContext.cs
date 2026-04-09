@@ -9,6 +9,8 @@ namespace PocketBinder.Data
         public DbSet<UserCollection> UserCollections { get; set; }
         public DbSet<User> Users { get; set; }
         public DbSet<AlbumCard> AlbumCards { get; set; }
+        public DbSet<Set> Sets { get; set; }
+        public DbSet<Card> Cards { get; set; }
 
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {

@@ -1,38 +1,28 @@
-﻿using PocketBinder.DTOs.API;
+﻿using PocketBinder.Data;
 using PocketBinder.DTOs.Binder;
+using PocketBinder.DTOs.Pagination;
 using PocketBinder.DTOs.Query;
-using PocketBinder.Services.CacheService;
 
 namespace PocketBinder.Services.TcgApiServices
 {
     public class PokemonTcgService : IPokemonTcgService
     {
-        private readonly IPokemonTcgApi _pokemonTcgApi;
-        private readonly ICacheService _cacheService;
-        public PokemonTcgService(IPokemonTcgApi pokemonTcgApi, ICacheService cacheService)
+        private readonly ApplicationDbContext _context;
+        public PokemonTcgService(ApplicationDbContext context)
         {
-            _pokemonTcgApi = pokemonTcgApi;
-            _cacheService = cacheService;
+            _context = context;
         }
 
         // Construye la consulta de búsqueda para cartas a partir de los parámetros del DTO
-        public async Task<PaginatedResponseDto<CardSummaryDto>> GetCardsAsync(CardQueryDto query)
+        public async Task<PaginatedResponseDto<CardSummaryDto>> SearchCardsAsync(CardQueryDto query)
         {
-            var q = BuildCardQuery(query);
-            var cacheKey = $"cards:{q}:page:{query.Page}:size:{query.PageSize}";
-
-            return await _cacheService.GetOrCreateAsync(cacheKey, () =>
-                _pokemonTcgApi.GetCardsAsync(query.Page, query.PageSize, q, query.OrderBy));
+            throw new NotImplementedException();
         }
 
         // Construye la consulta de búsqueda para sets a partir de los parámetros del DTO
-        public async Task<PaginatedResponseDto<CardSetDto>> GetSetsAsync(SetQueryDto query)
+        public async Task<PaginatedResponseDto<SetDto>> SearchSetsAsync(SetQueryDto query)
         {
-            var q = BuildSetQuery(query);
-            var cacheKey = $"sets:{q}:page:{query.Page}:size:{query.PageSize}";
-
-            return await _cacheService.GetOrCreateAsync(cacheKey, () =>
-                _pokemonTcgApi.GetSetsAsync(query.Page, query.PageSize, q, query.OrderBy));
+            throw new NotImplementedException();
         }
 
         // Métodos privados para construir las consultas de filtros de cartas a partir de los DTOs
@@ -53,7 +43,7 @@ namespace PocketBinder.Services.TcgApiServices
         {
             var filters = new List<string>();
             if (!string.IsNullOrEmpty(query.Name)) filters.Add($"name:{query.Name}");
-            if (!string.IsNullOrEmpty(query.Series)) filters.Add($"series:{query.Series}");
+            if (!string.IsNullOrEmpty(query.Series)) filters.Add($"series:\"{query.Series}\"");
             return string.Join(" ", filters);
         }
     }

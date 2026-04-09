@@ -21,7 +21,7 @@ public class PokemonController : ControllerBase
     [HttpGet("cards")]
     public async Task<IActionResult> GetCards([FromQuery] CardQueryDto query)
     {
-        var result = await _pokemonTcgService.GetCardsAsync(query);
+        var result = await _pokemonTcgService.SearchCardsAsync(query);
         return Ok(result);
     }
 
@@ -29,7 +29,7 @@ public class PokemonController : ControllerBase
     [HttpGet("sets")]
     public async Task<ActionResult> GetSets([FromQuery] SetQueryDto query)
     {
-        var result = await _pokemonTcgService.GetSetsAsync(query);
+        var result = await _pokemonTcgService.SearchSetsAsync(query);
         return Ok(result);
     }
 

@@ -1,6 +1,6 @@
-﻿namespace PocketBinder.DTOs.Binder
+﻿namespace PocketBinder.DTOs.Sync.SyncSet
 {
-    public class CardSetDto
+    public class SyncSetDto
     {
         public string Id { get; set; }
         public string Name { get; set; }
@@ -8,7 +8,6 @@
         public int PrintedTotal { get; set; }
         public int Total { get; set; }
         public string ReleaseDate { get; set; }
-        public string UpdatedAt { get; set; }
-        public SetImageDto Images { get; set; }
+        public SyncSetImagesDto Images { get; set; }
     }
 }

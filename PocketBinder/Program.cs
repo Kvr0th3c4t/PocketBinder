@@ -5,7 +5,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PocketBinder.Data;
 using PocketBinder.Services.AuthServices;
-using PocketBinder.Services.CacheService;
+using PocketBinder.Services.SyncService;
 using PocketBinder.Services.TcgApiServices;
 using Refit;
 using System.Text;
@@ -74,15 +74,15 @@ builder.Services.AddRefitClient<IPokemonTcgApi>()
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Agregamos el servicio de caché en memoria para almacenar temporalmente los datos de la API de Pokémon TCG y reducir la cantidad de llamadas a la API externa
-builder.Services.AddMemoryCache();
 
 // Registramos el servicio de autenticación para que pueda ser inyectado en los controladores
 builder.Services.AddScoped<IAuthService, AuthService>();
 // Registramos el servicio de Pokémon TCG para que pueda ser inyectado en los controladores
 builder.Services.AddScoped<IPokemonTcgService, PokemonTcgService>();
-// Registramos el servicio de caché para que pueda ser inyectado en los controladores
-builder.Services.AddScoped<ICacheService, CacheService>();
+// Registramos el servicio de sincronización entre la API y nuestra BBDD
+builder.Services.AddScoped<ISyncService, SyncService>();
+// Registramos el servicio de sincronización con límite de tiempo
+builder.Services.AddHostedService<SyncBackgroundService>();
 // Registramos los validadores de FluentValidation para que puedan ser inyectados en los controladores
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
 

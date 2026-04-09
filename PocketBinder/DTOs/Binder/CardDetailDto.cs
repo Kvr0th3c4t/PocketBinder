@@ -2,19 +2,21 @@
 {
     public class CardDetailDto
     {
-        public string Id { get; set; }
-        public string Name { get; set; }
-        public CardSetDto Set { get; set; }
-        public string Number { get; set; }
-        public string Rarity { get; set; }
-        public ImageDto Images { get; set; }
+        public string Id { get; set; } = string.Empty;
+        public string Name { get; set; } = string.Empty;
+        public string SetId { get; set; } = string.Empty;
+        public string SetName { get; set; } = string.Empty;
+        public string Number { get; set; } = string.Empty;
+        public string Rarity { get; set; } = string.Empty;
+        public string SmallImageUrl { get; set; } = string.Empty;
+        public string LargeImageUrl { get; set; } = string.Empty;
+        public string Supertype { get; set; } = string.Empty;
+        public List<string>? Subtypes { get; set; }
+        public List<string>? Types { get; set; }
 
-        public string Supertype { get; set; }
-        public List<string> Subtypes { get; set; }
-        public List<string> Types { get; set; }
+        public string Artist { get; set; } = string.Empty;
 
-        public string Artist { get; set; }
-        public CardMarketDto CardMarket { get; set; }
-        public TcgPlayerDto TcgPlayer { get; set; }
+        public string? TcgPlayerUrl { get; set; }
+        public string? CardMarketUrl { get; set; }
     }
 }
