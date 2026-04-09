@@ -1,30 +1,38 @@
 ﻿using PocketBinder.DTOs.API;
 using PocketBinder.DTOs.Binder;
 using PocketBinder.DTOs.Query;
+using PocketBinder.Services.CacheService;
 
 namespace PocketBinder.Services.TcgApiServices
 {
     public class PokemonTcgService : IPokemonTcgService
     {
         private readonly IPokemonTcgApi _pokemonTcgApi;
-
-        public PokemonTcgService(IPokemonTcgApi pokemonTcgApi)
+        private readonly ICacheService _cacheService;
+        public PokemonTcgService(IPokemonTcgApi pokemonTcgApi, ICacheService cacheService)
         {
             _pokemonTcgApi = pokemonTcgApi;
+            _cacheService = cacheService;
         }
 
         // Construye la consulta de búsqueda para cartas a partir de los parámetros del DTO
         public async Task<PaginatedResponseDto<CardSummaryDto>> GetCardsAsync(CardQueryDto query)
         {
             var q = BuildCardQuery(query);
-            return await _pokemonTcgApi.GetCardsAsync(query.Page, query.PageSize, q, query.OrderBy);
+            var cacheKey = $"cards:{q}:page:{query.Page}:size:{query.PageSize}";
+
+            return await _cacheService.GetOrCreateAsync(cacheKey, () =>
+                _pokemonTcgApi.GetCardsAsync(query.Page, query.PageSize, q, query.OrderBy));
         }
 
         // Construye la consulta de búsqueda para sets a partir de los parámetros del DTO
         public async Task<PaginatedResponseDto<CardSetDto>> GetSetsAsync(SetQueryDto query)
         {
             var q = BuildSetQuery(query);
-            return await _pokemonTcgApi.GetSetsAsync(query.Page, query.PageSize, q, query.OrderBy);
+            var cacheKey = $"sets:{q}:page:{query.Page}:size:{query.PageSize}";
+
+            return await _cacheService.GetOrCreateAsync(cacheKey, () =>
+                _pokemonTcgApi.GetSetsAsync(query.Page, query.PageSize, q, query.OrderBy));
         }
 
         // Métodos privados para construir las consultas de filtros de cartas a partir de los DTOs
