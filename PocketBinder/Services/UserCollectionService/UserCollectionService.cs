@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http.HttpResults;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using PocketBinder.Data;
 using PocketBinder.DTOs.Binder;
 using PocketBinder.Models;
@@ -52,7 +51,6 @@ namespace PocketBinder.Services.UserCollectionService
                 .ToListAsync();
             var query = string.Join(" OR ", cardIds.Select(id => $"id:{id}"));
 
-            await _pokemonTcgApi.SearchCardsAsync(0,0, query);
 
             throw new NotImplementedException();
         }
