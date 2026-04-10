@@ -1,4 +1,5 @@
-﻿using PocketBinder.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using PocketBinder.Data;
 using PocketBinder.DTOs.Binder;
 using PocketBinder.DTOs.Pagination;
 using PocketBinder.DTOs.Query;
@@ -16,13 +17,92 @@ namespace PocketBinder.Services.TcgApiServices
         // Construye la consulta de búsqueda para cartas a partir de los parámetros del DTO
         public async Task<PaginatedResponseDto<CardSummaryDto>> SearchCardsAsync(CardQueryDto query)
         {
-            throw new NotImplementedException();
+            var cardsQuery = _context.Cards.Include(c => c.Set).AsQueryable(); ;
+
+            if (!string.IsNullOrEmpty(query.Name))
+            {
+                cardsQuery = cardsQuery.Where(c => c.Name.Contains(query.Name));
+            }
+            if (!string.IsNullOrEmpty(query.SetId))
+            {
+                cardsQuery = cardsQuery.Where(c => c.SetId == query.SetId);
+            }
+            if (!string.IsNullOrEmpty(query.Type))
+            {
+                cardsQuery = cardsQuery.Where(c => c.Types.Contains(query.Type));
+            }
+            if (!string.IsNullOrEmpty(query.Rarity))
+            {
+                cardsQuery = cardsQuery.Where(c => c.Rarity == query.Rarity);
+            }
+            if (!string.IsNullOrEmpty(query.Supertype))
+            {
+                cardsQuery = cardsQuery.Where(c => c.Supertype == query.Supertype);
+            }
+            if (!string.IsNullOrEmpty(query.Artist))
+            {
+                cardsQuery = cardsQuery.Where(c => c.Artist.Contains(query.Artist));
+            }
+            var totalCount = await cardsQuery.CountAsync();
+            var data = await cardsQuery
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .Select(c => new CardSummaryDto
+                {
+                    Id = c.Id,
+                    Name = c.Name,
+                    SetId = c.SetId,
+                    SetName = c.Set.Name,
+                    Number = c.Number,
+                    Rarity = c.Rarity,
+                    SmallImageUrl = c.SmallImageUrl
+                })
+                .ToListAsync();
+            return new PaginatedResponseDto<CardSummaryDto>
+            {
+                Data = data,
+                Page = query.Page,
+                PageSize = query.PageSize,
+                TotalCount = totalCount
+            };
         }
 
         // Construye la consulta de búsqueda para sets a partir de los parámetros del DTO
         public async Task<PaginatedResponseDto<SetDto>> SearchSetsAsync(SetQueryDto query)
         {
-            throw new NotImplementedException();
+            var setsQuery = _context.Sets.AsQueryable();
+
+            if (!string.IsNullOrEmpty(query.Name))
+            {
+                setsQuery = setsQuery.Where(s => s.Name.Contains(query.Name));
+            }
+            if (!string.IsNullOrEmpty(query.Series))
+            {
+                setsQuery = setsQuery.Where(s => s.Series.Contains(query.Series));
+            }
+            var totalCount = await setsQuery.CountAsync();
+            var data = await setsQuery
+                .Skip((query.Page - 1) * query.PageSize)
+                .Take(query.PageSize)
+                .Select(s => new SetDto
+                {
+                    Id = s.Id,
+                    Name = s.Name,
+                    Series = s.Series,
+                    PrintedTotal = s.PrintedTotal,
+                    Total = s.Total,
+                    ReleaseDate = s.ReleaseDate,
+                    SymbolUrl = s.SymbolUrl,
+                    LogoUrl = s.LogoUrl
+                })
+                .ToListAsync();
+            return new PaginatedResponseDto<SetDto>
+            {
+                Data = data,
+                Page = query.Page,
+                PageSize = query.PageSize,
+                TotalCount = totalCount
+            };
         }
     }
 }
