@@ -10,13 +10,11 @@ namespace PocketBinder.Services.UserCollectionService
     {
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
-        private readonly IPokemonTcgApi _pokemonTcgApi;
 
         public UserCollectionService(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, IPokemonTcgApi pokemonTcgApi)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
-            _pokemonTcgApi = pokemonTcgApi;
         }
 
         public async Task AddCardToCollectionAsync(string CardId, int Quantity)
@@ -49,10 +47,25 @@ namespace PocketBinder.Services.UserCollectionService
                 .Where(uc => uc.UserId == userId)
                 .Select(uc => uc.CardId)
                 .ToListAsync();
-            var query = string.Join(" OR ", cardIds.Select(id => $"id:{id}"));
 
-
-            throw new NotImplementedException();
+            return await _context.UserCollections
+                 .Where(uc => uc.UserId == userId)
+                 .Include(uc => uc.User)
+                 .Join(_context.Cards,
+                     uc => uc.CardId,
+                     c => c.Id,
+                     (uc, c) => new CardSummaryDto
+                     {
+                         Id = c.Id,
+                         Name = c.Name,
+                         SetId = c.SetId,
+                         SetName = c.Set.Name,
+                         Number = c.Number,
+                         Rarity = c.Rarity,
+                         SmallImageUrl = c.SmallImageUrl,
+                         Quantity = uc.Quantity
+                     })
+                 .ToListAsync();
         }
 
         public async Task RemoveCardFromCollectionAsync(string cardId)

@@ -9,5 +9,6 @@
         public string Number { get; set; } = string.Empty;
         public string Rarity { get; set; } = string.Empty;
         public string SmallImageUrl { get; set; } = string.Empty;
+        public int? Quantity { get; set; }
     }
 }

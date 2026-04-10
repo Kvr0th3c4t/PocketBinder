@@ -7,6 +7,7 @@ using PocketBinder.Data;
 using PocketBinder.Services.AuthServices;
 using PocketBinder.Services.SyncService;
 using PocketBinder.Services.TcgApiServices;
+using PocketBinder.Services.UserCollectionService;
 using Refit;
 using System.Text;
 
@@ -72,7 +73,34 @@ builder.Services.AddRefitClient<IPokemonTcgApi>()
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
+// Configuración de Swagger para incluir la autenticación JWT en la documentación de la API
+builder.Services.AddSwaggerGen(options =>
+{
+    options.AddSecurityDefinition("Bearer", new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+    {
+        Name = "Authorization",
+        Type = Microsoft.OpenApi.Models.SecuritySchemeType.Http,
+        Scheme = "Bearer",
+        BearerFormat = "JWT",
+        In = Microsoft.OpenApi.Models.ParameterLocation.Header,
+        Description = "Ingresa tu token JWT: Bearer {token}"
+    });
+
+    options.AddSecurityRequirement(new Microsoft.OpenApi.Models.OpenApiSecurityRequirement
+    {
+        {
+            new Microsoft.OpenApi.Models.OpenApiSecurityScheme
+            {
+                Reference = new Microsoft.OpenApi.Models.OpenApiReference
+                {
+                    Type = Microsoft.OpenApi.Models.ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
+});
 
 
 // Registramos el servicio de autenticación para que pueda ser inyectado en los controladores
@@ -81,10 +109,14 @@ builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IPokemonTcgService, PokemonTcgService>();
 // Registramos el servicio de sincronización entre la API y nuestra BBDD
 builder.Services.AddScoped<ISyncService, SyncService>();
+// Registramos el servicio de gestión de la colección del usuario para que pueda ser inyectado en los controladores
+builder.Services.AddScoped<IUserCollectionService, UserCollectionService>();
 // Registramos el servicio de sincronización con límite de tiempo
 builder.Services.AddHostedService<SyncBackgroundService>();
 // Registramos los validadores de FluentValidation para que puedan ser inyectados en los controladores
 builder.Services.AddValidatorsFromAssemblyContaining<Program>();
+// Registramos el servicio de acceso al contexto HTTP para que pueda ser inyectado en los servicios y controladores
+builder.Services.AddHttpContextAccessor();
 
 var app = builder.Build();
 
