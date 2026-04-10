@@ -44,6 +44,16 @@ namespace PocketBinder.Services.TcgApiServices
                 cardsQuery = cardsQuery.Where(c => c.Artist.Contains(query.Artist));
             }
             var totalCount = await cardsQuery.CountAsync();
+            cardsQuery = query.OrderBy switch
+            {
+                "name" => cardsQuery.OrderBy(c => c.Name),
+                "-name" => cardsQuery.OrderByDescending(c => c.Name),
+                "number" => cardsQuery.OrderBy(c => c.Number),
+                "-number" => cardsQuery.OrderByDescending(c => c.Number),
+                "set" => cardsQuery.OrderBy(c => c.Set.Name),
+                "-set" => cardsQuery.OrderByDescending(c => c.Set.Name),
+                _ => cardsQuery.OrderBy(c => c.Number) 
+            };
             var data = await cardsQuery
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)
@@ -81,6 +91,16 @@ namespace PocketBinder.Services.TcgApiServices
                 setsQuery = setsQuery.Where(s => s.Series.Contains(query.Series));
             }
             var totalCount = await setsQuery.CountAsync();
+            setsQuery = query.OrderBy switch
+            {
+                "name" => setsQuery.OrderBy(c => c.Name),
+                "-name" => setsQuery.OrderByDescending(c => c.Name),
+                "releaseDate" => setsQuery.OrderBy(c => c.ReleaseDate),
+                "-releaseDate" => setsQuery.OrderByDescending(c => c.ReleaseDate),
+                "total" => setsQuery.OrderBy(c => c.Total),
+                "-total" => setsQuery.OrderByDescending(c => c.Total),
+                _ => setsQuery.OrderBy(c => c.Name)
+            };
             var data = await setsQuery
                 .Skip((query.Page - 1) * query.PageSize)
                 .Take(query.PageSize)

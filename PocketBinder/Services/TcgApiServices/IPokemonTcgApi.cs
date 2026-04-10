@@ -1,5 +1,4 @@
-﻿using PocketBinder.DTOs.Binder;
-using PocketBinder.DTOs.Pagination;
+﻿using PocketBinder.DTOs.Pagination;
 using PocketBinder.DTOs.Sync.SyncCard;
 using PocketBinder.DTOs.Sync.SyncSet;
 using Refit;
