@@ -8,5 +8,6 @@ namespace PocketBinder.Models
         public DateTime AddedAt { get; set; }
         //Foreign key relationships
         public Album? Album { get; set; }
+        public Card? Card { get; set; }
     }
 }

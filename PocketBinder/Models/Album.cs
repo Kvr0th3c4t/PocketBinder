@@ -9,6 +9,7 @@ namespace PocketBinder.Models
         public string AlbumName { get; set; } = string.Empty;
         public AlbumType AlbumType { get; set; }
         public string? SetId { get; set; }
+        public string? SetName { get; set; }
         public DateTime CreatedAt { get; set; }
         
         //Foreign key relationships
