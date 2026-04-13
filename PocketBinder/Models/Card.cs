@@ -19,5 +19,6 @@ namespace PocketBinder.Models
         public string? CardMarketUrl { get; set; }
 
         public Set Set { get; set; }
+        public ICollection<AlbumCard>? AlbumCards { get; set; }
     }
 }
