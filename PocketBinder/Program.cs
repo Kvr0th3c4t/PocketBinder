@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PocketBinder.Data;
+using PocketBinder.Services.AlbumService;
 using PocketBinder.Services.AuthServices;
 using PocketBinder.Services.SyncService;
 using PocketBinder.Services.TcgApiServices;
@@ -111,6 +112,8 @@ builder.Services.AddScoped<IPokemonTcgService, PokemonTcgService>();
 builder.Services.AddScoped<ISyncService, SyncService>();
 // Registramos el servicio de gestión de la colección del usuario para que pueda ser inyectado en los controladores
 builder.Services.AddScoped<IUserCollectionService, UserCollectionService>();
+// Registramos el servicio de gestión de álbumes para que pueda ser inyectado en los controladores
+builder.Services.AddScoped<IAlbumService, AlbumService>();
 // Registramos el servicio de sincronización con límite de tiempo
 builder.Services.AddHostedService<SyncBackgroundService>();
 // Registramos los validadores de FluentValidation para que puedan ser inyectados en los controladores
