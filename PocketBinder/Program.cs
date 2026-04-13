@@ -103,6 +103,19 @@ builder.Services.AddSwaggerGen(options =>
     });
 });
 
+// Configuración de CORS para permitir solicitudes desde el frontend local solo en desarrollo
+builder.Services.AddCors(options =>
+{
+    if (builder.Environment.IsDevelopment())
+    {
+        options.AddPolicy("Development", policy =>
+        {
+            policy.AllowAnyOrigin()
+                  .AllowAnyHeader()
+                  .AllowAnyMethod();
+        });
+    }
+});
 
 // Registramos el servicio de autenticación para que pueda ser inyectado en los controladores
 builder.Services.AddScoped<IAuthService, AuthService>();
@@ -131,6 +144,11 @@ if (app.Environment.IsDevelopment())
 }
 
 app.UseHttpsRedirection();
+// Habilitamos CORS solo en desarrollo para permitir solicitudes desde el frontend local
+if (app.Environment.IsDevelopment())
+{
+    app.UseCors("Development");
+}
 // Habilitamos la autenticación y autorización en el pipeline de la aplicación
 app.UseAuthentication();
 app.UseAuthorization();

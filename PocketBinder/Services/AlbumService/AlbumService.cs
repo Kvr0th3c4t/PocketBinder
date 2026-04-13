@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PocketBinder.Data;
 using PocketBinder.DTOs.Album;
+using PocketBinder.Enums;
 using PocketBinder.Models;
 
 namespace PocketBinder.Services.AlbumService
@@ -36,12 +37,14 @@ namespace PocketBinder.Services.AlbumService
         public async Task CreateAlbumAsync(CreateAlbumDto dto)
         {
             var userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst("UserId").Value);
+            
             await _context.Albums.AddAsync(new Album
             {
-                AlbumName = dto.Name,
-                AlbumType = dto.Type,
-                SetId = dto.SetId,
                 UserId = userId,
+                AlbumName = dto.Name,
+                AlbumType = Enum.Parse<AlbumType>(dto.Type),
+                SetId = dto.SetId,
+                CreatedAt = DateTime.Now
             });
             await _context.SaveChangesAsync();
         }
@@ -57,14 +60,16 @@ namespace PocketBinder.Services.AlbumService
         public async Task<AlbumDetailDto> GetAlbumDetailAsync(int albumId)
         {
             var userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst("UserId").Value);
-            return await _context.Albums.Where(a => a.AlbumId == albumId)
+            return await _context.Albums
+                .Where(a => a.AlbumId == albumId)
+                .Include(a => a.Set)
                 .Select(a => new AlbumDetailDto
                 {
                     Id = a.AlbumId,
                     Name = a.AlbumName,
                     Type = a.AlbumType.ToString(),
                     SetId = a.SetId,
-                    SetName = a.SetName,
+                    SetName = a.Set != null ? a.Set.Name : null,
                     Cards = a.AlbumCards.Select(ac => new AlbumCardDto
                     {
                         Id = ac.CardId,
@@ -81,14 +86,16 @@ namespace PocketBinder.Services.AlbumService
         {
             var userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst("UserId").Value);
 
-            return await _context.Albums.Where(a => a.UserId == userId)
+            return await _context.Albums
+                .Where(a => a.UserId == userId)
+                .Include(a => a.Set)
                 .Select(a => new AlbumSummaryDto
                 {
                     Id = a.AlbumId,
                     Name = a.AlbumName,
                     Type = a.AlbumType.ToString(),
                     SetId = a.SetId,
-                    SetName = a.SetName
+                    SetName = a.Set != null ? a.Set.Name : null
                 }).ToListAsync();
         }
 

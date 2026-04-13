@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using PocketBinder.Data;
 
@@ -11,9 +12,11 @@ using PocketBinder.Data;
 namespace PocketBinder.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260413154024_RemoveSetNameOnAlbumModel")]
+    partial class RemoveSetNameOnAlbumModel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -41,14 +44,12 @@ namespace PocketBinder.Migrations
                         .HasColumnType("datetime2");
 
                     b.Property<string>("SetId")
-                        .HasColumnType("nvarchar(450)");
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<int>("UserId")
                         .HasColumnType("int");
 
                     b.HasKey("AlbumId");
-
-                    b.HasIndex("SetId");
 
                     b.HasIndex("UserId");
 
@@ -246,17 +247,11 @@ namespace PocketBinder.Migrations
 
             modelBuilder.Entity("PocketBinder.Models.Album", b =>
                 {
-                    b.HasOne("PocketBinder.Models.Set", "Set")
-                        .WithMany()
-                        .HasForeignKey("SetId");
-
                     b.HasOne("PocketBinder.Models.User", "User")
                         .WithMany("Albums")
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Set");
 
                     b.Navigation("User");
                 });
