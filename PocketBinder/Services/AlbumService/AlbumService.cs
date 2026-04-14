@@ -2,6 +2,7 @@
 using PocketBinder.Data;
 using PocketBinder.DTOs.Album;
 using PocketBinder.Enums;
+using PocketBinder.Exceptions;
 using PocketBinder.Models;
 
 namespace PocketBinder.Services.AlbumService
@@ -21,7 +22,7 @@ namespace PocketBinder.Services.AlbumService
         {
             var userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst("UserId").Value);
             if (!await _context.Albums.AnyAsync(a => a.AlbumId == albumId && a.UserId == userId))
-                throw new Exception("Album not found or access denied");
+                throw new ForbiddenException("Album not found or access denied");
             else 
             {
                 await _context.AlbumCards.AddAsync(new AlbumCard
@@ -79,7 +80,7 @@ namespace PocketBinder.Services.AlbumService
                         Number = ac.Card.Number,
                         IsOwned = _context.UserCollections.Any(uc => uc.UserId == userId && uc.CardId == ac.CardId)
                     }).ToList()
-                }).FirstOrDefaultAsync() ?? throw new Exception("Album not found");
+                }).FirstOrDefaultAsync() ?? throw new NotFoundException("Album not found");
         }
 
         public async Task<IEnumerable<AlbumSummaryDto>> GetUserAlbumsAsync()
@@ -101,7 +102,13 @@ namespace PocketBinder.Services.AlbumService
 
         public async Task RemoveCardFromAlbumAsync(int albumId, string cardId)
         {
-            await _context.AlbumCards.Where(ac => ac.AlbumId == albumId && ac.CardId == cardId).ExecuteDeleteAsync();
+            var userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst("UserId").Value);
+            if (!await _context.Albums.AnyAsync(a => a.AlbumId == albumId && a.UserId == userId))
+                throw new ForbiddenException("Album not found or access denied");
+            else
+            {
+                await _context.AlbumCards.Where(ac => ac.AlbumId == albumId && ac.CardId == cardId).ExecuteDeleteAsync();
+            }
         }
     }
 }

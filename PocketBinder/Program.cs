@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using PocketBinder.Data;
+using PocketBinder.Exceptions;
 using PocketBinder.Services.AlbumService;
 using PocketBinder.Services.AuthServices;
 using PocketBinder.Services.SyncService;
@@ -142,7 +143,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
-
+// Agregamos el middleware de manejo de errores personalizado para capturar las excepciones y devolver respuestas adecuadas
+app.UseMiddleware<ErrorHandlingMiddleware>();
 app.UseHttpsRedirection();
 // Habilitamos CORS solo en desarrollo para permitir solicitudes desde el frontend local
 if (app.Environment.IsDevelopment())

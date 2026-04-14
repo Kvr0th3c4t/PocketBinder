@@ -1,6 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PocketBinder.Data;
 using PocketBinder.DTOs.Binder;
+using PocketBinder.Exceptions;
 using PocketBinder.Models;
 using PocketBinder.Services.TcgApiServices;
 
@@ -11,7 +12,7 @@ namespace PocketBinder.Services.UserCollectionService
         private readonly ApplicationDbContext _context;
         private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public UserCollectionService(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor, IPokemonTcgApi pokemonTcgApi)
+        public UserCollectionService(ApplicationDbContext context, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _httpContextAccessor = httpContextAccessor;
@@ -23,7 +24,7 @@ namespace PocketBinder.Services.UserCollectionService
 
             if (await _context.UserCollections.AnyAsync(uc => uc.UserId == userId && uc.CardId == CardId))
             {
-                throw new InvalidOperationException("Card already exists in collection. Use UpdateCardQuantityAsync to change quantity.");
+                throw new BadRequestException("Card already exists in collection. Use UpdateCardQuantityAsync to change quantity.");
             }
             else
             {
@@ -43,10 +44,6 @@ namespace PocketBinder.Services.UserCollectionService
         public async Task<IEnumerable<CardSummaryDto>> GetUserCollectionAsync()
         {
             var userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst("UserId").Value);
-            var cardIds = await _context.UserCollections
-                .Where(uc => uc.UserId == userId)
-                .Select(uc => uc.CardId)
-                .ToListAsync();
 
             return await _context.UserCollections
                  .Where(uc => uc.UserId == userId)
@@ -72,12 +69,14 @@ namespace PocketBinder.Services.UserCollectionService
         {
             var userId = int.Parse(_httpContextAccessor.HttpContext.User.FindFirst("UserId").Value);
 
+            if (!await _context.UserCollections.AnyAsync(uc => uc.UserId == userId && uc.CardId == cardId))
+            {
+                throw new NotFoundException("Card not found in collection. Or access denied.");
+            }
+
             var entry = await _context.UserCollections
                 .FirstOrDefaultAsync(uc => uc.UserId == userId && uc.CardId == cardId);
-            if (entry == null)
-            {
-                throw new InvalidOperationException("Card not found in collection.");
-            }
+            
             _context.UserCollections.Remove(entry);
             await _context.SaveChangesAsync();
         }
@@ -91,7 +90,7 @@ namespace PocketBinder.Services.UserCollectionService
                 .FirstOrDefaultAsync(uc => uc.UserId == userId && uc.CardId == cardId);
             if (entry == null)
             {
-                throw new InvalidOperationException("Card not found in collection. Use AddCardToCollectionAsync to add it first.");
+                throw new BadRequestException("Card not found in collection. Use AddCardToCollectionAsync to add it first.");
             }
 
             entry.Quantity = quantity;
