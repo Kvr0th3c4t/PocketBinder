@@ -1,16 +1,14 @@
 ﻿using FluentValidation;
 using PocketBinder.DTOs.Query;
 
-namespace PocketBinder.Validators
+namespace PocketBinder.Validators.QueryValidators
 {
-    public class SetQueryDtoValidator : AbstractValidator<SetQueryDto>
+    public class CardQueryDtoValidator : AbstractValidator<CardQueryDto>
     {
-        public SetQueryDtoValidator() 
+        public CardQueryDtoValidator() 
         {
             RuleFor(x => x.Name)
                 .MaximumLength(100).WithMessage("Name cannot exceed 100 characters.");
-            RuleFor(x => x.Series)
-                .MaximumLength(100).WithMessage("Series cannot exceed 100 characters.");
             RuleFor(x => x.Page)
                 .GreaterThan(0).WithMessage("Page must be greater than 0.");
             RuleFor(x => x.PageSize)

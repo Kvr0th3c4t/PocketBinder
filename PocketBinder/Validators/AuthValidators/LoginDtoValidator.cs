@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using PocketBinder.DTOs.Auth;
 
-namespace PocketBinder.Validators
+namespace PocketBinder.Validators.AuthValidators
 {
     public class LoginDtoValidator : AbstractValidator<LoginDto>
     {
